@@ -21,7 +21,7 @@ Dispatch table_cleaning : table_cleaning(table_id)
 Dispatch maxstaytime : maxstaytime(table_client_id)
 
 //Il piatto prodotto è a tutti gli effetti prodotto dal sistema. Ma l'obiettivo del sistema non è modellare i piatti
-//La mia modellazione prevede anche una entità che conosca gli stati di tutto il sistema in generale, quindi dispatch di tutti gli elementi verso di lui
+//La mia modellazione prevede anche una entità che conosca gli stati di tutto il sistema in generale (tearoom), quindi dispatch di tutti gli elementi verso di lui
 Dispatch smartbell_state : smartbell_state(s_state)
 Dispatch waiter_state : waiter_state(w_state)
 Dispatch table_state : table_state(t_state)
