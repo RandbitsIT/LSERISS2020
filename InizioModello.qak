@@ -27,9 +27,10 @@ Dispatch waiter_state : waiter_state(w_state)
 Dispatch table_state : table_state(t_state)
 Dispatch barman_state : barman_state(b_state)
 
-//Inoltre ho pensato di spostare parte della logica del sistema sul tearoom. Il robot chiederà a lui la posizione degli elementi
-Request ask_for_position : ask_for_position(element_id)
-Response rep_to_waiter : rep_to_waiter(position)
+//Inoltre ho pensato di spostare parte della logica del sistema sul tearoom. Il robot chiederà a lui la posizione degli elementi, e l'eventuale disponibilità dei tavoli
+Request ask_for_element_position : ask_for_position(element_id)
+Request ask_for_free_table : ask_for_free_table
+Response rep_element_position : rep_element_position(position)
 
 //Messaggi su cui sono in dubbio
 //Questo sicuramente è un evento, ma ogni evento ha bisogno di qualcuno che sia in ascolto altrimenti viene perso, e il waiter non può essere sempre pronto
