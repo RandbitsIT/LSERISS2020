@@ -1,51 +1,15 @@
-Ci sono due tipologie di persone che interagiscono con il sistema:
--Manager
--Clienti
+1) Il cliente deve poter notificare la sua volontà di entrare nella tearoom suonando un campanello
+	1.a) Se l'accesso non è possibile, è necessario comunicare al cliente i tempi di attesa
+2) La direzione del tearoom deve garantire il rispetto delle norme di prevenzione Covid-19
+	2.a) La temperatura dei clienti sarà misurata prima dell'ingresso, durante la fase di pressione del campanello
+3) Il cliente deve poter ordinare qualcosa dal menù
+4) Il cliente deve poter consumare quello che ha ordinato
+5) Il cliente può rimanere seduto al tavolo al massimo MAXSTAYTIME tempo
+6) Il cliente deve pagare prima di andarsene (? Paga anche se non ha ordinato niente)
+7) Il cliente deve lasciare la stanza una volta completato servizio e consumo
 
-Per il manager, l'elemento di interazione è un web-browser che mostra lo stato della stanza da te
-
-Per i clienti, gli elementi di interazione sono:
--Campanello
--Tavolo del te
--Cameriere
--Stanza del te
-
-Tra di loro gli elementi interagiscono nel seguente modo:
-Campanello -> Cameriere (Richiesta di accesso)
-Cameriere -> Campanello (Risposta)
-
-Cameriere -> Tavolo (Occupazione)
-
-Cliente -> Cameriere -> Barman (Ordine)
-Barman -> Cameriere -> Cliente (Servizio)
-
-Cliente -> Cameriere (Pagamento)
-Da quello che si legge, il pagamento avviene in ogni caso, anche se il cliente non ordina
-
-Cameriere -> Tavolo (Pulizia, che implica disoccupazione)
-
-Tutti quanti gli oggetti comunicano con la stanza del te per comunicargli il loro stato
-
-Stati degli elementi:
-Campanello: Non mi vengono in mente stati. Magari potrei suddividerlo in 2, uno che spedisce e l'altro che riceve, ma non mi sembra molto legato allo stato
-
-Tavolo del te:
--Libero
--Occupato
--Da pulire
-
-Cameriere:
--Libero
--Portare cliente al tavolo
--Segnare ordine del cliente
--Servire il cliente
--Prendere il pagamento dal cliente
--Portarlo all'uscita
--Pulire il tavolo
-
-Barman:
--Libero
--Occupato
-
-Stanza del te:
--Somma degli stati precedenti
+8) Il cliente può sedersi a un tavolo solo se questo è pulito
+9) C'è un limite di tempo nella produzione dell'ordine?
+10) Il manager deve poter vedere lo stato corrente della tearoom attraverso un servizio web associato all'applicazione
+11) Se il barman ha finito di produrre l'ordine ma non lo ha ancora consegnato al cameriere, può passare all'ordine successivo?
+12) Il robot deve tornare alla posizione "Home" se non ha niente da fare

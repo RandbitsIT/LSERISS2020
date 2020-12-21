@@ -74,6 +74,7 @@ QActor waiter context ctxtearoom{
 
 }
 
+//Qui la transizione di busy è da modificare, in quanto non prende in conto il tempo che il cliente aspetta l'ordine
 QActor table context ctxtearoom{
 	[# val client_id = 0 #]
 	State free initial{
@@ -115,3 +116,7 @@ QActor barman context ctxtearoom{
 QActor tearoom context ctxtearoom{
 
 }
+
+//Personalmente modellerei tutte le interazioni con il cliente considerando tutti i messaggi prodotti dal cliente come eventi
+//Se il cameriere è impegnato però non può ascoltare gli eventi e quindi questi vengono persi
+//Serve quindi un ascoltatore per ogni tavolo?
