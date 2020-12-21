@@ -1,0 +1,51 @@
+Ci sono due tipologie di persone che interagiscono con il sistema:
+-Manager
+-Clienti
+
+Per il manager, l'elemento di interazione è un web-browser che mostra lo stato della stanza da te
+
+Per i clienti, gli elementi di interazione sono:
+-Campanello
+-Tavolo del te
+-Cameriere
+-Stanza del te
+
+Tra di loro gli elementi interagiscono nel seguente modo:
+Campanello -> Cameriere (Richiesta di accesso)
+Cameriere -> Campanello (Risposta)
+
+Cameriere -> Tavolo (Occupazione)
+
+Cliente -> Cameriere -> Barman (Ordine)
+Barman -> Cameriere -> Cliente (Servizio)
+
+Cliente -> Cameriere (Pagamento)
+Da quello che si legge, il pagamento avviene in ogni caso, anche se il cliente non ordina
+
+Cameriere -> Tavolo (Pulizia, che implica disoccupazione)
+
+Tutti quanti gli oggetti comunicano con la stanza del te per comunicargli il loro stato
+
+Stati degli elementi:
+Campanello: Non mi vengono in mente stati. Magari potrei suddividerlo in 2, uno che spedisce e l'altro che riceve, ma non mi sembra molto legato allo stato
+
+Tavolo del te:
+-Libero
+-Occupato
+-Da pulire
+
+Cameriere:
+-Libero
+-Portare cliente al tavolo
+-Segnare ordine del cliente
+-Servire il cliente
+-Prendere il pagamento dal cliente
+-Portarlo all'uscita
+-Pulire il tavolo
+
+Barman:
+-Libero
+-Occupato
+
+Stanza del te:
+-Somma degli stati precedenti
