@@ -1,0 +1,37 @@
+System TEAROOM
+
+//Il cliente è un entità a se stante che non devo modellare all'interno del sistema
+//ciò che fa è un evento
+Event ring_pressed : ring_pressed(V)
+
+Request ringing_smartbell : ringing_smartbell(client_id)
+Response access_to_smartbell : access_to_smartbell(delay_to_wait)
+
+Request order_to_waiter : order_to_waiter(order)
+Response dish_to_table : dish_to_table(dish)
+
+Request order_to_barman : order_to_barman(order)
+Response dish_to_waiter : dish_to_waiter(dish)
+
+Dispatch client_to_table : client_to_table(client_id)
+Dispatch client_left : client_left(client_id) //questo può servire se in futuro ci saranno più clienti a un solo tavolo
+Dispatch table_cleaning : table_cleaning(table_id)
+
+//Questo è qualcosa di previsto dal sistema, non accade in maniera accidentale, per questo non è un evento ma un dispatch
+Dispatch maxstaytime : maxstaytime(table_client_id)
+
+//Il piatto prodotto è a tutti gli effetti prodotto dal sistema. Ma l'obiettivo del sistema non è modellare i piatti
+//La mia modellazione prevede anche una entità che conosca gli stati di tutto il sistema in generale, quindi dispatch di tutti gli elementi verso di lui
+Dispatch smartbell_state : smartbell_state(s_state)
+Dispatch waiter_state : waiter_state(w_state)
+Dispatch table_state : table_state(t_state)
+Dispatch barman_state : barman_state(b_state)
+
+//Inoltre ho pensato di spostare parte della logica del sistema sul tearoom. Il robot chiederà a lui la posizione degli elementi
+Request ask_for_position : ask_for_position(element_id)
+Response rep_to_waiter : rep_to_waiter(position)
+
+//Messaggi su cui sono in dubbio
+//Questo sicuramente è un evento, ma ogni evento ha bisogno di qualcuno che sia in ascolto altrimenti viene perso, e il waiter non può essere sempre pronto
+Event client_want_to_go : client_want_to_go(client_id, table_id)
+Dispatch watch_tearoom_state : watch_tearoom_state
