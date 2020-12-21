@@ -1,38 +1,117 @@
-System TEAROOM
+System -msglog tearoom
 
-//Il cliente è un entità a se stante che non devo modellare all'interno del sistema
-//ciò che fa è un evento
+//Evento di pressione del campanello
 Event ring_pressed : ring_pressed(V)
 
+//Interazione tra cameriere e campanello
 Request ringing_smartbell : ringing_smartbell(client_id)
 Response access_to_smartbell : access_to_smartbell(delay_to_wait)
 
+//Interazione tra cliente seduto e cameriere
 Request order_to_waiter : order_to_waiter(order)
 Response dish_to_table : dish_to_table(dish)
 
+//Interazione tra cameriere e barman
 Request order_to_barman : order_to_barman(order)
 Response dish_to_waiter : dish_to_waiter(dish)
 
+//Interazione tra cameriere e tavolo
 Dispatch client_to_table : client_to_table(client_id)
-Dispatch client_left : client_left(client_id) //questo può servire se in futuro ci saranno più clienti a un solo tavolo
-Dispatch table_cleaning : table_cleaning(table_id)
+Dispatch client_left : client_left(X)
+Dispatch table_clean : table_clean(X)
 
-//Questo è qualcosa di previsto dal sistema, non accade in maniera accidentale, per questo non è un evento ma un dispatch
-Dispatch maxstaytime : maxstaytime(table_client_id)
+//Requisito di tempo massimo
+Dispatch max_stay_time : maxstaytime(table_client_id)
 
-//Il piatto prodotto è a tutti gli effetti prodotto dal sistema. Ma l'obiettivo del sistema non è modellare i piatti
-//La mia modellazione prevede anche una entità che conosca gli stati di tutto il sistema in generale (tearoom), quindi dispatch di tutti gli elementi verso di lui
+//Requisito del manager che deve visionare lo stato del sistema
 Dispatch smartbell_state : smartbell_state(s_state)
 Dispatch waiter_state : waiter_state(w_state)
 Dispatch table_state : table_state(t_state)
 Dispatch barman_state : barman_state(b_state)
 
-//Inoltre ho pensato di spostare parte della logica del sistema sul tearoom. Il robot chiederà a lui la posizione degli elementi, e l'eventuale disponibilità dei tavoli
+//Spostamenti del robot e verifiche di stato
 Request ask_for_element_position : ask_for_position(element_id)
-Request ask_for_free_table : ask_for_free_table
+Request ask_for_free_table : ask_for_free_table(X)
 Response rep_element_position : rep_element_position(position)
 
-//Messaggi su cui sono in dubbio
-//Questo sicuramente è un evento, ma ogni evento ha bisogno di qualcuno che sia in ascolto altrimenti viene perso, e il waiter non può essere sempre pronto
+//Su questi due messaggi non sono convinto
 Event client_want_to_go : client_want_to_go(client_id, table_id)
-Dispatch watch_tearoom_state : watch_tearoom_state
+Dispatch watch_tearoom_state : watch_tearoom_state(X)
+
+Context ctxtearoom ip [host="localhost" port=8055]
+
+QActor smartbell context ctxtearoom{
+	[# val client_id = 0 #]
+	State free initial{
+		println("Ready to be ringed!") 
+		forward tearoom -m smartbell_state : smartbell_state(free)		
+  	}
+ 	Transition t0 whenEvent ring_pressed -> pressed
+				  whenReply access_to_smartbell and ${payloadArg(0)} == 0 -> access_permise else wait_and_retry
+	
+	State pressed{
+		println("I'm ringing")
+		request waiter -m ringing_smartbell : ringing_smartbell(@client_id)
+		[# client_id++ #]	
+		forward tearoom -m smartbell_state : smartbell_state(pressed)
+	}
+	Goto free
+	
+	State access_permise{
+		println("Welcome customer! Follow the waiter to the table")
+		forward tearoom -m smartbell_state : smartbell_state(access_permise)
+	}
+	Goto free
+	
+	State wait_and_retry{
+		println("Sorry customer! You have to wait")
+		forward tearoom -m smartbell_state : smartbell_state(wait_and_retry)
+	}
+	Goto free
+}
+
+QActor waiter context ctxtearoom{
+
+}
+
+QActor table context ctxtearoom{
+	[# val client_id = 0 #]
+	State free initial{
+		println("Free table!") 
+		forward tearoom -m table_state : table_state(free)		
+  	}
+ 	Transition t0 whenMsg client_to_table -> busy
+	
+	State busy{
+		//L'assegnazione di questa variabile è corretto?
+		[# client_id = ${payloadArg(0)} #]
+		println("A customer take this place") 
+		forward tearoom -m table_state : table_state(busy)		
+  	}
+ 	Transition t0 whenTime maxstaytime -> notify_waiter
+				  whenMsg client_left -> to_clean
+	
+	State notify_waiter{
+		println("Customer stays to long, he have to go!")
+		//L'uso della chiocciola è corretto? Volevo  estrarre il valore della variabile
+		forward waiter -m max_stay_time : max_stay_time(@client_id)
+		forward tearoom -m table_state : table_state(notify_waiter)
+	}
+ 	Transition t0 whenMsg client_left -> to_clean
+	
+	State to_clean{
+		println("Table to clean!");
+		forward tearoom -m table_state : table_state(to_clean)
+	}
+ 	Transition t0 whenMsg table_clean -> free
+}
+
+//Il barman può prendere in carico un nuovo ordine se il cameriere non ha ancora preso il precedente?
+QActor barman context ctxtearoom{
+
+}
+
+//Come posso modellare il fatto che la tearoom contiene lo stato di tutti gli altri oggetti?
+QActor tearoom context ctxtearoom{
+
+}
